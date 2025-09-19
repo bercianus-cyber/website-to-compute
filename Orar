@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orarul lui Steff 📚🔥</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; }
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; }
+  #topbar { display: flex; justify-content: space-between; padding: 10px; background: #34495e; color: white; }
+  #topbar input { width: 70%; padding: 8px; border-radius: 5px; border: none; }
+  #topbar button { background: #e74c3c; border: none; padding: 8px 15px; border-radius: 5px; color: white; cursor: pointer; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  th, td { border: 1px solid #ccc; padding: 12px; text-align: center; }
+  th { background: #3498db; color: white; }
+  td { cursor: pointer; background: #ecf0f1; }
+  td.verde { background: #2ecc71 !important; color: white; }
+  td.rosu { background: #e74c3c !important; color: white; }
+  td:hover { background: #dfe6e9; }
+  #popup {
+    display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background: white;
+    padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    width: 300px;
+  }
+  #popup textarea, #popup input {
+    width: 100%; margin: 5px 0; padding: 8px;
+  }
+  #popup button { margin-top: 10px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  #popup button:hover { background: #2980b9; }
+</style>
+</head>
+<body>
+<h1>📅 Orarul lui Steff</h1>
+
+<div id="topbar">
+  <input type="text" id="search" placeholder="🔍 Caută materie...">
+  <button onclick="resetOrar()">Reset</button>
+</div>
+
+<table id="orar">
+  <tr>
+    <th>Ziua</th>
+    <th>Ora 1</th>
+    <th>Ora 2</th>
+    <th>Ora 3</th>
+    <th>Ora 4</th>
+    <th>Ora 5</th>
+    <th>Ora 6</th>
+    <th>Ora 7</th>
+  </tr>
+  <tr>
+    <td>Luni</td>
+    <td onclick="deschidePopup(this)">Sport</td>
+    <td onclick="deschidePopup(this)">Matematică</td>
+    <td onclick="deschidePopup(this)">Fizică</td>
+    <td onclick="deschidePopup(this)">Biologie</td>
+    <td onclick="deschidePopup(this)">Română</td>
+    <td onclick="deschidePopup(this)">Chimie</td>
+    <td onclick="deschidePopup(this)">Franceză</td>
+  </tr>
+  <tr>
+    <td>Marți</td>
+    <td onclick="deschidePopup(this)">TIC</td>
+    <td onclick="deschidePopup(this)">Istorie</td>
+    <td onclick="deschidePopup(this)">Tehnologică</td>
+    <td onclick="deschidePopup(this)">Geografie</td>
+    <td onclick="deschidePopup(this)">Robotică</td>
+    <td onclick="deschidePopup(this)">Chimie</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Miercuri</td>
+    <td onclick="deschidePopup(this)">Socială</td>
+    <td onclick="deschidePopup(this)">Matematică</td>
+    <td onclick="deschidePopup(this)">Opţional Română</td>
+    <td onclick="deschidePopup(this)">Engleză</td>
+    <td onclick="deschidePopup(this)">Română</td>
+    <td onclick="deschidePopup(this)">1/3</td>
+    <td onclick="deschidePopup(this)">Franceză</td>
+  </tr>
+  <tr>
+    <td>Joi</td>
+    <td onclick="deschidePopup(this)">Religie</td>
+    <td onclick="deschidePopup(this)">Matematică</td>
+    <td onclick="deschidePopup(this)">Sport</td>
+    <td onclick="deschidePopup(this)">Română</td>
+    <td onclick="deschidePopup(this)">Dirigenţie</td>
+    <td onclick="deschidePopup(this)">Latină</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Vineri</td>
+    <td onclick="deschidePopup(this)">Matematică</td>
+    <td onclick="deschidePopup(this)">Fizică</td>
+    <td onclick="deschidePopup(this)">Biologie</td>
+    <td onclick="deschidePopup(this)">Română</td>
+    <td onclick="deschidePopup(this)">Desen</td>
+    <td onclick="deschidePopup(this)">Muzică</td>
+    <td onclick="deschidePopup(this)">Engleză</td>
+  </tr>
+</table>
+
+<!-- Fereastra pentru teme -->
+<div id="popup">
+  <h3 id="materie"></h3>
+  <input id="numeMaterie" type="text" placeholder="Scrie materia...">
+  <textarea id="tema" placeholder="Scrie tema aici..."></textarea>
+  <br>
+  <button onclick="salveaza()">✅ Salvează</button>
+  <button onclick="inchidePopup()">❌ Închide</button>
+</div>
+
+<script>
+let celulaSelectata = null;
+let orarData = JSON.parse(localStorage.getItem("orarSteff")) || {};
+
+function deschidePopup(cell) {
+  celulaSelectata = cell;
+  document.getElementById("materie").innerText = "Editează:";
+  document.getElementById("numeMaterie").value = cell.innerText || "";
+  document.getElementById("tema").value = cell.getAttribute("data-tema") || "";
+  document.getElementById("popup").style.display = "block";
+}
+
+function salveaza() {
+  let materie = document.getElementById("numeMaterie").value;
+  let text = document.getElementById("tema").value;
+
+  celulaSelectata.innerText = materie;
+  celulaSelectata.setAttribute("data-tema", text);
+
+  celulaSelectata.classList.remove("verde", "rosu");
+  if (text.trim() !== "") {
+    if (text.toLowerCase().includes("mâine")) {
+      celulaSelectata.classList.add("rosu");
+    } else {
+      celulaSelectata.classList.add("verde");
+    }
+  }
+
+  salveazaLocal();
+  inchidePopup();
+}
+
+function inchidePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+
+function salveazaLocal() {
+  let tabele = document.querySelectorAll("#orar td");
+  let data = {};
+  tabele.forEach((cell, index) => {
+    data[index] = {
+      materie: cell.innerText,
+      tema: cell.getAttribute("data-tema") || "",
+      clasa: cell.className
+    };
+  });
+  localStorage.setItem("orarSteff", JSON.stringify(data));
+}
+
+function incarcaLocal() {
+  let tabele = document.querySelectorAll("#orar td");
+  Object.keys(orarData).forEach((key, index) => {
+    let cell = tabele[index];
+    let info = orarData[key];
+    if (info) {
+      cell.innerText = info.materie;
+      cell.setAttribute("data-tema", info.tema);
+      cell.className = info.clasa;
+    }
+  });
+}
+
+function resetOrar() {
+  if (confirm("Sigur vrei să ștergi tot orarul?")) {
+    localStorage.removeItem("orarSteff");
+    location.reload();
+  }
+}
+
+document.getElementById("search").addEventListener("input", function() {
+  let val = this.value.toLowerCase();
+  let tabele = document.querySelectorAll("#orar td");
+  tabele.forEach(cell => {
+    if (cell.innerText.toLowerCase().includes(val) && val !== "") {
+      cell.style.border = "3px solid #f1c40f";
+    } else {
+      cell.style.border = "1px solid #ccc";
+    }
+  });
+});
+
+incarcaLocal();
+</script>
+</body>
+</html>
